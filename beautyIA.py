@@ -8,6 +8,8 @@ from keras import optimizers
 from keras import losses
 from keras import callbacks
 from keras.preprocessing import image
+from keras import saving
+import numpy as np
 
 model = models.Sequential()
 
@@ -61,24 +63,24 @@ model.add(layers.Flatten())
 
 model.add(layers.Dense(
     256,
-    kernel_initializer= initializers.RandomNormal(stddev=1), 
-    bias_initializer= initializers.Zeros(),
+    # kernel_initializer= initializers.RandomNormal(stddev=1), 
+    # bias_initializer= initializers.Zeros(),
     activation=activations.relu
 ))
 
 
 model.add(layers.Dense(
     128,
-    kernel_initializer= initializers.RandomNormal(stddev=1), 
-    bias_initializer= initializers.Zeros(),
+    # kernel_initializer= initializers.RandomNormal(stddev=1), 
+    # bias_initializer= initializers.Zeros(),
     activation=activations.relu
 ))
 
 
 model.add(layers.Dense(
     2,
-    kernel_initializer= initializers.RandomNormal(stddev=1),
-    bias_initializer= initializers.Zeros(),
+    # kernel_initializer= initializers.RandomNormal(stddev=1),
+    # bias_initializer= initializers.Zeros(),
     activation=activations.softmax
 ))
 
@@ -125,3 +127,16 @@ model.fit(
         callbacks.ModelCheckpoint(filepath='model/model.{epoch:02d}-{loss:.2f}.keras')
     ]
 )
+
+model.save("finalModel.keras")
+
+
+def Predict(image):
+    loadedModel = saving.load_model("finalModel.keras")
+    test_image = image.load_img(image, target_size=(128,128))
+    test_image = image.img_to_array(test_image)
+    test_image = np.expand_dims(test_image, axis=0)
+    result = loadedModel.predict(test_image)
+    print(result)
+
+Predict("mulher.jpeg")
